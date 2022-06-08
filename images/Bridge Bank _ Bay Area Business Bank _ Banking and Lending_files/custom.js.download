@@ -1,0 +1,192 @@
+﻿(function ($) {
+    
+})($);
+
+
+(function ($) {
+    var speedbumpId = null;
+    var speedbumpValue = null;
+    var optionName = null;
+    var optionValue = null;
+
+    var openSpeedbump = function (id, value) {
+        if (id) {
+            var speedbump = $('div[data-settings-id="' + id + '"]');
+            if (speedbump && speedbump.length && value) {
+                speedbump.modal('show').one('shown.bs.modal', function () {
+                    speedbump.find(".continue-to-login").attr("href", value);
+                }).one('hide.bs.modal', function (e) {
+                    select.get(0).selectedIndex = 0;
+                    select.trigger('render');
+                });
+            } else if (value) {
+                window.open(value, "_blank");
+            }
+        }
+    };
+
+    var select = $('select[user-login]').on('change', function (e) {
+        var option = this.options[e.target.selectedIndex];
+        speedbumpId = $(option).attr("data-settings-id");
+        speedbumpValue = $(option).attr("value");
+        optionName = $(option).attr("data-name");
+        optionValue = $(option).text();
+    });
+
+    var btnGo = $('.btn-go').on('click', function (e) {
+        openSpeedbump(speedbumpId, speedbumpValue);
+        //console.log(optionName, optionValue);\
+        ga("create", "UA-734013-11", { name: "wabLogIn" })
+        ga('wabLogIn.send', 'event', { eventCategory: 'log in', eventAction: 'submit', eventLabel: optionName + " - " + optionValue, transport: 'beacon' });
+    });
+
+    var select = $('select[user-login-alert]').on('change', function (e) {
+        var option = this.options[e.target.selectedIndex];
+        var alertId = $(option).attr("data-alert-id");
+        speedbumpId = $(option).attr("data-settings-id");
+        speedbumpValue = $(option).attr("value");
+        optionName = $(option).attr("data-name");
+        optionValue = $(option).text();
+
+        if (alertId) {
+            var alert = $("div[data-id='" + alertId + "'");
+            alert.show({
+                complete: function () {
+                    alert.find('.closeMessage').one('click', function () {
+                        $(this).parent().hide();
+                    });
+                }
+            });
+        };
+    });
+})($);
+
+/* Company Overview */
+(function ($) {
+    $('.company-overview-button').click(function (e) {
+        e.preventDefault();
+        var $this = $(this);
+        var div = $this.closest(".company-overview");
+
+        $this.toggleClass('read-more');
+        if ($this.hasClass('read-more')) {
+            $this.text('READ MORE');
+            div.removeClass('expanded');
+        } else {
+            $this.text('READ LESS');
+            div.addClass('expanded');
+        }
+    });
+
+    setTimeout(function () {
+        $('.find-banker .customSelect').customSelect();
+    }, 500);
+
+    
+})($);
+
+/* dspot hide */
+(function ($) {
+    if ($('.banker-details').find('.right-rail').children().length > 0) {
+        $('.dspot').find('.image-offset').hide();
+        $('.dspot').find('.dspot__content').css('margin-left', 0).css('width', '100%');
+    }
+})($);
+
+/* Multiple Login */
+(function ($) {
+    $('.bank-login').each(function () {
+        var bankLogin = $(this);
+        var bankLoginMobile = bankLogin.find('.login-link');
+        var bankLoginSelect = bankLogin.find('select');
+        var bankLoginAlerts = bankLogin.find('.bank-login-alert');
+        var closeAlert = bankLogin.find('.close-alert');
+        var moreInfo = bankLogin.find('.more-info');
+        var closeInfo = bankLogin.find('.close-info');
+        var loginBack = bankLogin.find('.login-back');
+
+        bankLoginMobile.on('click', function (e) {
+            e.preventDefault();
+            bankLogin.addClass('show-login');
+            $("html").css({"overflow": "hidden"});
+        });
+
+        loginBack.on('click', function (e) {
+            e.preventDefault();
+            bankLogin.removeClass('show-login');
+            $("html").css({ "overflow": "" });
+        });
+
+        bankLoginSelect.on('change', function (e) {
+            if (bankLogin.find('.bank-login-alert').length > 0) {
+                bankLogin.find('.bank-login-alert').removeClass('show-alert');
+                var loginType = $(this);
+                var selectedIndex = parseInt(bankLoginSelect.prop('selectedIndex')) - 1;
+
+                bankLogin.find('.bank-login-alert:eq(' + selectedIndex + ')').addClass('show-alert');
+            }
+        });
+
+        closeAlert.on('click', function (e) {
+            e.preventDefault();
+            bankLogin.find('.bank-login-alert').removeClass('show-alert');
+        });
+
+        moreInfo.on('click', function (e) {
+            e.preventDefault();
+
+            bankLogin.find('.bank-login-alert').removeClass('show-alert');
+            bankLogin.find('.bank-login-more-info').addClass('show-info');
+        });
+
+        closeInfo.on('click', function (e) {
+            e.preventDefault();
+            bankLogin.find('.bank-login-more-info').removeClass('show-info');
+        });
+    });
+})($);
+
+
+/* Custom Scroll */
+(function ($) {
+    $('.panel-list .panel-body > div').slimScroll({
+        color: '#ccc',
+        distance: '5px',
+        railVisible: true,
+        railColor: '#f2f2f2',
+        railOpacity: 1,
+    });
+
+    setTimeout(function () {
+        $('ul.bankers').slimScroll({
+            color: '#ccc',
+            distance: '5px',
+            railVisible: true,
+            railColor: '#f2f2f2',
+            railOpacity: 1,
+        });
+    }, 500);
+})($);
+
+
+/* Responsive Tabs */
+(function ($) {
+    function fixResponsiveTabs() {
+        if ($(window).width() >= 960) {
+            $('.tabs > ul').each(function (e) {
+                var tabs = $(this);
+
+                if (tabs.find('> li').length > 1) {
+                    tabs.attr('style', 'display: table;');
+                };
+            });
+        }
+    }
+
+    $(window).on('resize', function () {
+        $('.tabs > ul').attr('style', '');
+        fixResponsiveTabs();
+    });
+
+    fixResponsiveTabs();
+})($);

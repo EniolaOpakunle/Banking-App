@@ -1,0 +1,131 @@
+
+#nav{
+    position: fixed;
+    /* position: absolute; */
+    z-index: 4;
+    background-color: white;
+    width: 100vw;
+    height: 45px;
+}
+#nav2{
+    background-color: rgb(194, 190, 190);
+    padding-top:15px;
+    height: 55px;
+
+}
+#searchform{
+    margin-left: 300px;
+}
+#loginnav{
+    margin-left: 600px;
+    width: 100px !important;
+}
+
+.card{
+    background-color: rgba(2, 27, 2, 0.877) !important;
+    color: white !important;
+    margin: 0;
+}
+input:focus{
+    outline: none;
+}
+button:focus{
+    outline: none;
+}
+input{
+    border: none;
+    border-bottom:  black solid thin;
+    margin: 10px;
+    height: 25px;
+    width: 220px;
+    background-color: transparent;
+}
+#welcomeID{
+    margin-top: 15px;
+    text-align: center;
+}
+#nav3{
+    width: 100vw;
+    background-color: white;
+}
+aside{
+    margin-left: 100px !important;
+    margin-top: 40px;
+    height: 230px;
+    color: white;
+}
+#transferbutton , #balancebutton , #customerbutton{
+    border: none !important;
+    background-color: transparent;
+    color: white;
+    height: 30px;
+}
+#displayarea{
+    width: 600px;
+    margin-top: 40px;
+    margin-left: 100px;
+    background-color: rgba(17, 16, 16, 0.664);
+    color: white;
+}
+.signupin{
+    width: 300px;
+    font-size: 17px;
+    text-align: center;
+    border:  black solid thin;
+    height: 30px;
+    border-radius: 5px;
+}
+.signupinn{
+    width: 300px;
+}
+#signinbtn{
+    width: 100px;
+    margin-top: 20px;
+    height: 25px;
+    font-size: 16px;
+    background-color: green;
+    border: green thin solid;
+}
+#pp{
+    font-size: 20px !important;
+    margin-left: 550px !important;
+    margin-top: -170px !important;
+}
+#ppimage{
+    margin-left: 330px;
+    margin-top: 50px;
+}
+#pph1{
+    text-align: center;
+    margin-top: 20px;
+}
+#displayArea{
+    margin-left: 550px;
+}
+#logindiv{
+    background-color: rgba(0, 0, 0, 0.575);
+    width: 400px;
+    height: 400px;
+    padding: 15px;
+    margin: auto;
+    margin-top: 80px;
+    color: white;
+}
+.loginInput{
+    margin-top: 40px;
+    border: white solid thin;
+    width: 250px;
+    border-radius: 20px;
+    /* border-bottom: thin solid white; */
+}
+#loginbtn{
+    margin-top: 50px;
+    width: 100px;
+    height: 25px;
+    border: white thin solid;
+    border-radius: 5px;
+}
+#loginh1{
+    margin-top: 50px;
+    color: white;
+}

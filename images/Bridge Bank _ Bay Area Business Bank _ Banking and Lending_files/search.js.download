@@ -1,0 +1,71 @@
+﻿
+(function ($) {
+    $.fn.search = function (options) {
+        var o = $.extend({
+            container: '',
+            textBox: '',
+            submitButton: '',
+            optionContainer: '',
+            options: '',
+            dropdowns: '',
+            dropdownsAsTrigger: false,
+            url: ''
+        }, options || {});
+
+        $(o.container).find(o.submitButton).on('click', function (e) {
+            e.preventDefault();
+
+            var tbVal = o.textBox.val();
+            var ddVal = $('option:selected', $(o.container).find('select')).val();
+
+            ddVal = ddVal != null ? ddVal : "";
+
+            if (ddVal.length > 0) {
+                ddVal = "&b=" + ddVal;
+            }
+
+            var qUrl = o.url + "?q=" + tbVal + ddVal;
+
+            if (tbVal != null && tbVal.length > 0) {
+                window.location = qUrl;
+            }
+        });
+
+        $(o.container).on('keyup', o.textBox, function (e) {
+            e.preventDefault();
+
+            var tbVal = o.textBox.val();
+            var ddVal = $('option:selected', $(o.container).find('select')).val();
+
+            ddVal = ddVal != null ? ddVal : "";
+
+            if (ddVal.length > 0) {
+                ddVal = "&b=" + ddVal;
+            }
+
+            var qUrl = o.url + "?q=" + tbVal + ddVal;
+
+            if (e.which == 13 && tbVal.length > 0) {
+                window.location = qUrl;
+            }
+        });
+
+        $(o.optionContainer).find($(o.options)).change(function (e) {
+            var sort = $(this).prop('id');
+            var sUrl = $(this).data('sort-url') + '&sort=' + sort;
+
+            window.location = sUrl;
+        });
+
+        $(o.container).find(o.dropdowns).change(function() {
+            if (o.dropdownsAsTrigger === true) {
+                var ddUrl = $(this).data('url');
+                var ddQs = $(this).data('qs');
+                var ddVal = $('option:selected', $(this)).val();
+                var separator = ddUrl.indexOf('?') != -1 ? '&' : '?';
+
+                window.location = ddUrl + separator+ ddQs + "=" + ddVal;
+            }
+        });
+    }
+})(jQuery);

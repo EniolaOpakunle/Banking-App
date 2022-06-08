@@ -1,0 +1,76 @@
+﻿(function ($, angular) {
+    "use strict";
+    //console.log("find-banker.js");
+
+    var findBanker = angular.module('find.banker', [])
+        //.controller('FindBankerController', FindBankerController)
+        .factory('FindBankerFactory', FindBankerFactory)
+        .directive('findBanker', FindBankerDirective);
+
+
+
+    FindBankerDirective.$inject = [];
+    function FindBankerDirective() {
+        FindBankerDirectiveController.$inject = ["$scope", "FindBankerFactory"];
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope: {
+                id: "@findBankerId",
+            },
+            templateUrl: function (elem, attr) {
+                return 'find-banker-' + attr.findBankerId + '.html';
+            },
+            //template: '<div ng-include src="ctrl.getTemplateUrl()" include-replace/>',
+            controller: FindBankerDirectiveController,
+            controllerAs: "ctrl",
+            bindToController: true,
+            link: linkFunc
+        };
+
+        function linkFunc(scope, elem, attrs) {
+
+        };
+
+        function FindBankerDirectiveController($scope, FindBankerFactory) {
+            var vm = this;
+            vm.sector = null;
+
+            vm.activate = function(){
+                FindBankerFactory.getData(vm.id).then(function (result) {
+                    vm.data = _.chain(result).filter(function (v, k) {
+                        return v.regions && v.regions.length > 0;
+                    }).value();
+                });
+            };
+
+            vm.activate();
+        };
+    };
+
+    FindBankerController.$inject = ['FindBankerFactory'];
+    function FindBankerController(banker) {
+        var vm = this;
+
+        vm.activate = function () {
+            banker.getData
+        };
+    };
+
+
+    FindBankerFactory.$inject = ['$q','$window'];
+    function FindBankerFactory($q, $window) {
+
+        return {
+            getData: function (id) {
+                return $q(function (resolve, reject) {
+                    setTimeout(function () {
+                        resolve($window.findBanker[id] || []);
+                    }, 0);
+                });
+            }
+        };
+    };
+    
+})($, angular);
+

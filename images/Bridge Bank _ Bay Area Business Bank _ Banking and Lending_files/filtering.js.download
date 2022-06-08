@@ -1,0 +1,292 @@
+(function ($, angular) {
+    "use strict";
+    var app = angular.module('app', ['ngSanitize', 'angular.filter', 'find.banker', 'ui.bootstrap', 'darthwade.loading']);
+
+    app.run(['$loading', function ($loading) {
+        $loading.setDefaultOptions({
+            text: "",
+            spinnerOptions: {
+                lines: 15, // The number of lines to draw
+                width: 4, // The line thickness
+                radius: 15, // The radius of the inner circle
+                color: '#004071', //'#68B4FF',
+                left: '50%',
+                top: '50%'
+            }
+        });
+    }]);
+
+    app.directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    scope.$apply(function () {
+                        scope.$eval(attrs.ngEnter);
+                    });
+
+                    event.preventDefault();
+                }
+            });
+        };
+    });
+
+    /* Events JSON Service */
+    app.service('eventsService', ['$http', '$q', function ($http, $q) {
+
+        var deferred = $q.defer();
+        var tagIds = $("#eventTags").val();
+
+        $http.get('/webapi/EventListing/Events/', { params: { tags: tagIds } }).then(function (data) {
+            deferred.resolve(data);
+        });
+
+        this.getEvents = function () {
+            return deferred.promise;
+        }
+
+    }]);
+
+    /* Events Controller */
+    app.controller('eventsCtrl', ['$scope', 'eventsService', function ($scope, eventsService) {
+        var promise = eventsService.getEvents();
+
+        promise.then(function (data) {
+            $scope.events = data.data;
+
+        });
+
+    }]);
+
+    app.factory('webapiFactory', ['$http', '$q', function ($http, $q) {
+        return {
+            getInsights: function (tagIds, pageId, filterTagIds, query) {
+                return $http.get('/webapi/Insight/Insights/', { params: { tags: tagIds, page: pageId, filterTags: filterTagIds, query: query } });
+            },
+
+            getNews: function (tagIds, pageId, filterTagIds, query) {
+                return $http.get('/webapi/NewsListing/NewsArticles/', { params: { tags: tagIds, page: pageId, filterTags: filterTagIds, query: query } });
+            }
+        }
+    }]);
+
+    app.controller('insightCtrl', ['$scope', '$timeout', 'webapiFactory', '$loading', function ($scope, $timeout, webapiFactory, $loading) {
+        $scope.query = null;
+        $scope.items = [];
+        $scope.insights = $scope.items;
+        $scope.tags = [];
+        $scope.filterByTag = {};
+
+        //pagination params
+        $scope.totalItems = $scope.insights.length;
+        $scope.itemsPerPage = 10;
+        $scope.currentPage = 1;
+        $scope.maxSize = 5; //Number of pager buttons to show
+        $scope.pageChanged = function (pageNo) {
+            //$scope.currentPage = pageNo;
+            $timeout(function () {
+                $(window).scrollTo(".scroll-to-location", {
+                    offset: 100,
+                    axis: "y",
+                    duration: 400,
+                });
+            }, 10);
+        };
+
+        $scope.showFilter = true;;
+        $scope.showPagination = true;
+
+        $scope.search = function () {
+            //console.log("query->", $scope.query);
+
+            webapiFactory.getInsights($scope.tagIds, $scope.pageId, $scope.filterTagIds, $scope.query).then(function (result) {
+
+                $scope.items = result.data;
+                $scope.insights = $scope.items;
+
+                $scope.tags = _.concat([{ id: null, name: "--- Any ---" }], _.chain(angular.copy($scope.items)).flatMap(function (i) {
+                    return i['filter-tags'];
+                }).uniqBy(function (i) {
+                    return i.id;
+                }).sortBy(function (i) {
+                    return i.name;
+                }).value());
+                $scope.filterByTag = $scope.tags[0];
+
+                $timeout(truncateText);
+
+                $timeout(function () {
+                    $loading.finish('loading-insights');
+                    $('select#select-insight').trigger('render');
+                })
+            }).catch(function (error) {
+                console.log(error);
+                $timeout(function () {
+                    $loading.finish('loading-insights');
+                });
+            });
+        };
+
+        $scope.update = function (i) {
+            if ($scope.filterByTag.id) {
+                $scope.insights = _.chain($scope.items).filter(function (v, k) {
+                    return _.find(v['filter-tags'] || [], function (o) {
+                        return o.id == $scope.filterByTag.id;
+                    });
+                }).value();
+            } else {
+                $scope.insights = $scope.items;
+            }
+        };
+
+        $scope.activate = function (pageId, tagIds, filterTagIds, showFilter, showPagination, itemsPerPage) {
+
+            $scope.showFilter = showFilter;
+            $scope.showPagination = showPagination;
+            $scope.itemsPerPage = itemsPerPage || $scope.itemsPerPage || 10;
+
+            $timeout(function () {
+                $loading.start('loading-insights');
+            });
+            
+            $scope.tagIds = tagIds;
+            $scope.pageId = pageId;
+            $scope.filterTagIds = filterTagIds;
+
+            $scope.search();
+        };
+
+        //$scope.activate();
+    }]);
+
+
+    /* News Controller */
+    app.controller('newsCtrl', ['$scope', '$timeout', 'webapiFactory', '$loading', function ($scope, $timeout, webapiFactory, $loading) {
+        $scope.query = null;
+        $scope.items = [];
+        $scope.news = $scope.items;
+        $scope.tags = [];
+        $scope.filterByTag = {};
+
+        //pagination params
+        $scope.totalItems = $scope.news.length;
+        $scope.itemsPerPage = 10;
+        $scope.currentPage = 1;
+        $scope.maxSize = 5; //Number of pager buttons to show
+        $scope.pageChanged = function (pageNo) {
+            //$scope.currentPage = pageNo;
+            $timeout(function () {
+                $(window).scrollTo(".scroll-to-location", {
+                    offset: 100,
+                    axis: "y",
+                    duration: 400,
+                });
+            }, 10);
+        };
+
+        $scope.showFilter = true;;
+        $scope.showPagination = true;
+
+        $scope.search = function () {
+            webapiFactory.getNews($scope.tagIds, $scope.pageId, $scope.filterTagIds, $scope.query).then(function (result) {
+
+                $scope.items = result.data;
+                $scope.news = $scope.items;
+
+                $scope.tags = _.concat([{ id: null, name: "--- Any ---" }], _.chain(angular.copy($scope.items)).flatMap(function (i) {
+                    return i['filter-tags'];
+                }).uniqBy(function (i) {
+                    return i.id;
+                }).sortBy(function (i) {
+                    return i.name;
+                }).value());
+                $scope.filterByTag = $scope.tags[0];
+
+                $timeout(truncateText);
+
+                $timeout(function () {
+                    $loading.finish('loading-news');
+                    $('select#select-news').trigger('render');
+                })
+            }).catch(function (error) {
+                console.log(error);
+                $timeout(function () {
+                    $loading.finish('loading-news');
+                });
+            });
+        };
+
+        $scope.update = function (i) {
+            //console.log("$scope.filterByTag.id", $scope.filterByTag.id);
+            if ($scope.filterByTag.id) {
+                $scope.news = _.chain($scope.items).filter(function (v, k) {
+                    return _.find(v['filter-tags'] || [], function (o) {
+                        return o.id == $scope.filterByTag.id;
+                    });
+                }).value();
+            } else {
+                $scope.news = $scope.items;
+            }
+        };
+
+        $scope.activate = function (pageId, tagIds, filterTagIds, showFilter, showPagination, itemsPerPage) {
+
+            $scope.showFilter = showFilter;
+            $scope.showPagination = showPagination;
+            $scope.itemsPerPage = itemsPerPage || $scope.itemsPerPage || 10;
+
+            $timeout(function () {
+                $loading.start('loading-news');
+            });
+
+            $scope.tagIds = tagIds;
+            $scope.pageId = pageId;
+            $scope.filterTagIds = filterTagIds;
+
+            $scope.search();
+        };
+
+        //$scope.activate();
+
+    }]);
+
+    function truncateText() {
+        var $truncateTitle = $('h3.js-truncate-title-news');
+        $truncateTitle.ellipsis();
+    }
+
+    /* Client List JSON Service */
+    app.service('clientService', ['$http', '$q', function ($http, $q) {
+
+        var deferred = $q.defer();
+        var tagIds = $("#clientTags").val();
+
+        $http.get('/webapi/ClientListing/client', { params: { tags: tagIds } }).then(function (data) {
+            deferred.resolve(data);
+        });
+
+        this.getClientList = function () {
+            return deferred.promise;
+        }
+
+    }]);
+
+
+    /* Client Controller */
+    app.controller('clientListCtrl', ['$scope', '$timeout', 'clientService', function ($scope, $timeout, clientService) {
+        var promise = clientService.getClientList();
+
+        promise.then(function (data) {
+            $scope.clients = data.data;
+		    $timeout(toHtml);
+        });
+    }]);
+
+    function toHtml() {
+	    $('.client__excerpt p').each(function(){
+		    var pVal = $(this).text();
+		    $(this).html(pVal);
+	    });
+    }
+
+})($, angular);

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="portal.css">
+</head>
+<body style="background-image: url('images/work-group-pic.jpg'); background-size: cover; width: 100vw; height: 100vh;">
+        <ul class="nav bg-success" id="nav3">
+            <li class="nav-item">
+              <a class="nav-link active text-light mx-5" style="font-weight: bold; font-size: 20px; margin-left: 100px !important;" aria-current="page" href="#">Kuda</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light" href="index.html" style="margin-left: 450px;">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light" href="#">About us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light" href="profile.html">Personal Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="adminpage.html">Admin</a>
+              </li>
+              <li class="nav-item bg-lighttext-light">
+                <a class="nav-link text-light" href="index.html">Log out</a>
+              </li>
+          </ul><br>
+        <marquee behavior="alternate" direction="right"><h1 id="welcomeID">WELCOME BACK</h1></marquee>
+        <div class="d-flex">  
+        <div>
+          <aside class="border border-success bg-success" style="width: 20rem;">
+            <p>Bank Transactions</p>
+            <hr class="bg-light">
+            <nav>
+              <ul>
+                <li><button onclick="checkBalance()" id="balancebutton">Balance</button> </li>
+                <hr class="bg-light">
+                <li><button onclick="makeTransfer()" id="transferbutton"> Transfer</button></li>
+                <hr class="bg-light">
+                <li><button id="customerbutton"> Customer care</button></li>
+              </ul>
+            </nav>
+          </aside>
+        </div>
+        <div id="displayarea" class="border border-success"></div>
+        </div>
+        <script>
+          var profileArray = JSON.parse(localStorage.userIndex)
+          var information = JSON.parse(localStorage.allInformations)
+          function checkBalance(){
+            displayarea.innerHTML = "Your account balance is" + " " + information[profileArray].balance
+            displayarea.style.textAlign = "center"
+            displayarea.style.fontSize = "30px"
+          }
+          function makeTransfer(){
+              displayarea.innerHTML = "<input placeholder = 'enter your account number' id='input'>" +"<br>" +"<input placeholder = 'enter the receivers acount number' id = 'input2'>" +"<br>" + "<input placeholder = 'enter amount' id = 'input3'>" + "<button onclick='transfer()'> transfer";
+
+              input.style.width = "98%"
+              input.style.borderBottom = "thin solid white"
+              input2.style.width = "98%"
+              input2.style.borderBottom = "thin solid white"
+              input3.style.width = "98%"
+              input3.style.borderBottom = "thin solid white"
+
+          }
+          function transfer(){
+            existing = {}
+            existingp = {}
+            for(var i = 0; i<information.length; i++){
+            if(input.value == information[profileArray].accountNumber && input3.value < information[profileArray].balance && input2.value == information[i].accountNumber){
+              existing.firstname = information[profileArray].firstname;
+              existing.lastname = information[profileArray].lastname;
+              existing.dateOfBirth = information[profileArray].dateOfBirth;
+              existing.email = information[profileArray].email;
+              existing.password = information[profileArray].password;
+              existing.phoneNumber = information[profileArray].phoneNumber;
+              existing.pin = information[profileArray].pin;
+              existing.username = information[profileArray].username
+              existing.accountNumber = information[profileArray].accountNumber;
+              existing.Gender = information[profileArray].Gender
+              existing.balance = eval(information[profileArray].balance - input3.value);
+
+
+              
+              existingp.firstname = information[i].firstname;
+              existingp.lastname = information[i].lastname;
+              existingp.dateOfBirth = information[i].dateOfBirth;
+              existingp.email = information[i].email;
+              existingp.password = information[i].password;
+              existingp.phoneNumber = information[i].phoneNumber;
+              existingp.pin = information[i].pin;
+              existingp.username = information[i].username;
+              existingp.accountNumber = information[i].accountNumber;
+              existingp.Gender = information[i].Gender
+               existingp.balance = eval(information[i].balance + input3.value);
+               information.splice(profileArray, 1, existing)
+               localStorage.allInformations = JSON.stringify(information)
+               information.splice(i, 1, existingp)
+               localStorage.allInformations = JSON.stringify(information)
+               displayarea.innerHTML = "Transaction Completed" + "<br>" + "Your new account balance is : " + " " + existing.balance
+            }
+          }
+        }
+
+
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="portal.css">
+</head>
+<body style="background-image: url('images/work-group-pic.jpg'); background-size: cover; height: 100vh;">
+    <center>
+        
+        <div id="logindiv">
+            <h1 id="loginh1">Log In</h1>
+            <input type="username" placeholder="username" id="usernameInput" class="loginInput"> <br>
+            <input type="password" placeholder="password" id="passwordInput" class="loginInput" > <br>
+            <button onclick="logIn()" id="loginbtn"> Log in</button>
+        </div>
+    </center>
+    <script>
+        var array2 = JSON.parse(localStorage.allInformations)
+        function logIn(){
+            for(i = 0; i<array2.length; i++){
+                if(usernameInput.value == array2[i].username && passwordInput.value == array2[i].password){
+                    localStorage.userIndex=i;
+                    alert("you can now log in")
+                    window.location.href = "welcomeBackpage.html"
+                }
+                else if( usernameInput.value == array2[i].username && passwordInput.value != array2[i].password){
+                    alert("Incorrect password")
+                    passwordInput.value = ""
+                }
+                else if( usernameInput.value != array2[i].username && passwordInput.value == array2[i].password){
+                    alert("Incorrect username")
+                    usernameInput.value = ""
+                }
+                else if(usernameInput.value == "" || passwordInput.value == ""){
+                    alert("Input your details before you log in")
+                }
+            }
+            
+            
+        } 
+    </script>
+</body>
+</html>

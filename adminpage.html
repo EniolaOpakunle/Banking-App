@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="admin.css">
+    <!-- <link rel="stylesheet" href="portal.css"> -->
+</head>
+<body style="background-color: rgba(0, 128, 0, 0.171);">
+    <ul class="nav" id="nav">
+        <li class="nav-item mx-3">
+          <a class="nav-link active text-success" style="font-size: 20px; margin-left: 50px; font-weight: bold;" aria-current="page" href="#">KUDA</a>
+        </li>
+        <li class="nav-item mx-3">
+          <a class="nav-link text-success" style="margin-left: 700px;" href="index.html"> Home</a>
+        </li>
+          <li class="nav-item mx-3">
+            <form class="d-flex">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchform"><img src="images/Search_50px.png" width="20px" height="20px" alt="" class="my-2" style="margin-left: -40px;">
+              <!-- <button class="btn btn-outline-success my-2 pb-3" type="submit" style="height: 30px;">Search</button> -->
+            </form>
+          </li>
+        </ul>
+        <section class="d-flex">
+            <aside>
+                    <img src="images/enny15.jpg" alt="" width="50px" height="60px" style="border-radius: 50px; margin-left: 100px;">
+            </aside>
+        <table id="displayArea" border="1"></table>
+        <div id="display2">
+            First Name : <input type="name" placeholder="firstname" id="firstNameInput"  class="signupinn"> <br>
+            Last Name : <input type="name" placeholder="lastname" id="lastNameInput"  class="signupinn"> <br>
+            Date Of Birth : <input type="date" placeholder="DDMMYY" id="dateOfBirthInput"  class="signupinn"> <br>
+            Email : <input type="email" placeholder="email address" id="emailInput"  class="signupinn"> <br>
+            Password : <input type="password" placeholder="password" id="passwordInput"  class="signupinn"> <br>
+            Phone Number : <input type="number" placeholder="phone number" id="phoneNumInput" class="signupinn" > <br>
+            Username : <input type="text" placeholder="username" id="usernameInput" class="signupinn"> <br>
+             Pin : <input type="text" placeholder="pin" id="pinInput" class="signupinn"> <br>
+            Account Number : <input type="text" id="accNoInput" class="signupinn"> <br> 
+            Account Balance : <input type="text" id="accBalInput" class="signupinn"> <br>
+            <select name="" id="select"> 
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+            </select>  <br>
+            <div id="btn"></div>
+        </div>
+        </section>
+    <script>
+        var username = "Admin";
+        var password= "onlyadmin";
+        var myInformation = []
+        var information = JSON.parse(localStorage.allInformations)
+        myInformation = information
+        function logIn(){
+            displayArea.innerHTML = "<input placeholder = 'username' id = 'userInput'>" +"<br>" + "<input placeholder = 'password' id = 'passInput' type = 'password'>" + "<br>" + "<button onclick = 'checkingInfo()' id ='checkBtn'> Log In"
+        }
+        function checkingInfo(){
+            if(userInput.value == username && passInput.value == password){
+                alert("login")
+                userInput.style.display = "none";
+                passInput.style.display = "none";
+                checkBtn.style.display = "none";
+                displayAllInfo();
+            }
+        }
+            function displayAllInfo(){
+                var tab = "<table>"
+                    tab += "<tr>"
+                    tab += "<td>" + "Firstname" + "<td>" + "Lastname" + "<td>" + "Email" + "<td>" + "Password" + "<td>" +"PhoneNo" + "<td>" + "Pin" + "<td>" + "Username" + "<td>" +"AccountNo" +"<td>" + "Gender" + "<td>" +"Edit" + "<td>" + "Delete"
+                for(var i = 0; i<myInformation.length; i++){
+                    tab += "<tr>"
+                    displayArea.innerHTML = ""
+                    tab  += "<td>" + myInformation[i].firstname + "<td>"+ myInformation[i].lastname + "<td>"+myInformation[i].email + "<td>"+ myInformation[i].password +  "<td>"+myInformation[i].phoneNumber + "<td>"+ myInformation[i].pin + "<td>"+ myInformation[i].username + "<td>"+myInformation[i].accountNumber + "<td>"+myInformation[i].Gender +"<td>" + "<button onclick='editFunc("+i+")'>Edit</button>"  + "<td>" + "<button onclick='deleteFunc("+i+")'> Delete </button>"
+                }
+                displayArea.innerHTML = tab;
+                
+        }
+        displayAllInfo()
+ function deleteFunc(index){
+     information.splice(index , 1)
+     localStorage.allInformations = JSON.stringify(information)
+    displayAllInfo();
+        }
+        function editFunc(index){
+            display2.style.display = "block"
+            firstNameInput.value = information[index].firstname
+            lastNameInput.value = information[index].lastname
+            dateOfBirthInput.value = information[index].dateOfBirth
+            emailInput.value = information[index].email
+            passwordInput.value = information[index].password
+            phoneNumInput.value = information[index].phoneNumber
+            usernameInput.value = information[index].username
+            pinInput.value = information[index].pin
+            select.value = information[index].Gender
+            accNoInput.value =information[index].accountNumber;
+            accBalInput.value = information[index].balance;
+            btn.innerHTML +="<button onclick='save("+index+")' id='Save' >Save</button>"
+        }
+        function save(index){
+            customer = {};
+            customer.firstname = firstNameInput.value;
+            customer.lastname = lastNameInput.value;
+            customer.dateOfBirth = dateOfBirthInput.value;
+            customer.email = emailInput.value;
+            customer.password = passwordInput.value;
+            customer.phoneNumber = phoneNumInput.value;
+            customer.username = usernameInput.value;
+            customer.pin = pinInput.value;
+            customer.Gender = select.value;
+            customer.accountNumber = accNoInput.value;
+            customer.balance = accBalInput.value
+            information.splice(index, 1, customer)
+            localStorage.allInformations = JSON.stringify(information);
+            display2.style.display = "none"
+        }
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="portal.css">
+</head>
+<body style="background-color: rgba(128, 255, 0, 0.432);">
+    <center>
+    <div>
+        <h1 id="signp">Sign Up</h1>
+        <input type="name" placeholder="firstname" id="firstNameInput"  class="signupin"> <br>
+        <input type="name" placeholder="lastname" id="lastNameInput"  class="signupin"> <br>
+        <input type="date" placeholder="DDMMYY" id="dateOfBirthInput"  class="signupin"> <br>
+        <input type="email" placeholder="email address" id="emailInput"  class="signupin"> <br>
+        <input type="password" placeholder="password" id="passwordInput"  class="signupin"> <br>
+        <input type="number" placeholder="phone number" id="phoneNumInput" class="signupin" > <br>
+        <input type="text" placeholder="username" id="usernameInput" class="signupin"> <br>
+        <input type="text" placeholder="pin" id="pinInput" class="signupin"> <br>
+        <select name="" id="select"> 
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select> <br>
+        <button id="signinbtn" onclick="signIn()">Sign In</button>
+    </div>
+    <script>
+        
+        var userDetails = []
+         
+        function signIn(){
+        var getInformation = {}
+        getInformation.firstname = firstNameInput.value;
+        getInformation.lastname = lastNameInput.value;
+        getInformation.dateOfBirth = dateOfBirthInput.value;
+        getInformation.email = emailInput.value;
+        getInformation.password = passwordInput.value;
+        getInformation.phoneNumber = phoneNumInput.value;
+        getInformation.pin = pinInput.value;
+        getInformation.username = usernameInput.value;
+        var acctNo = Math.floor(Math.random() *100000000000)
+        getInformation.accountNumber = acctNo
+        getInformation.Gender = select.value
+        getInformation.balance = 100000;
+        if(localStorage.allInformations){
+            existing = JSON.parse(localStorage.allInformations)
+            userDetails = existing
+            for (var i = 0; i<userDetails.length; i++){
+                if(usernameInput.value == userDetails[i].username){
+                    alert("Username Already Exists, Try a different username")
+                    return
+                }
+                else if(usernameInput.value == "" || lastNameInput.value == "" || firstNameInput.value == "" || passwordInput.value == "" || emailInput.value == "" || pinInput.value == "" || phoneNumInput == "" || select.value == ""){
+                    alert("Fill all necessary details before you can log in")
+                    return
+                }
+            }
+            userDetails.push(getInformation)
+            localStorage.allInformations = JSON.stringify(userDetails)
+        }else{
+            userDetails.push(getInformation)
+            localStorage.allInformations = JSON.stringify(userDetails )
+        }
+        alert("Your account number is" + getInformation.accountNumber)
+        window.location.href = "loginpage.html"
+        }
+    </script>
+</center>
+</body>
+</html>
